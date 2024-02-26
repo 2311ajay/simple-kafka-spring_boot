@@ -1,3 +1,6 @@
+/**
+ * Configuration class for Kafka consumer settings.
+ */
 package com.simplekafka.configuration;
 
 import org.apache.kafka.clients.consumer.ConsumerConfig;
@@ -20,42 +23,60 @@ import java.util.Map;
 @Configuration
 public class KafkaConsumerConfiguration {
 
+    // Injecting properties from application.properties
     @Value("${kafka.server}")
     private String kafkaServer;
 
     @Value("${kafka.group.id}")
     private String kafkaGroupId;
 
+    /**
+     * Factory for creating Kafka listener container for batch processing.
+     * Enables batch listener mode and sets the message converter.
+     */
     @Bean
     public KafkaListenerContainerFactory<?> batchFactory() {
         ConcurrentKafkaListenerContainerFactory<Long, OrderDto> factory =
                 new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(consumerFactory());
         factory.setBatchListener(true);
-        factory.setRecordMessageConverter(new StringJsonMessageConverter());;
+        factory.setRecordMessageConverter(new StringJsonMessageConverter());
         return factory;
     }
 
+    /**
+     * Factory for creating Kafka listener container for single message processing.
+     * Disables batch listener mode and sets the message converter.
+     */
     @Bean
     public KafkaListenerContainerFactory<?> singleFactory() {
         ConcurrentKafkaListenerContainerFactory<Long, OrderDto> factory =
                 new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(consumerFactory());
         factory.setBatchListener(false);
-        factory.setRecordMessageConverter(new StringJsonMessageConverter());;
+        factory.setRecordMessageConverter(new StringJsonMessageConverter());
         return factory;
     }
 
+    /**
+     * Creates a Kafka consumer factory.
+     */
     @Bean
     public ConsumerFactory<Long, OrderDto> consumerFactory() {
         return new DefaultKafkaConsumerFactory<>(consumerConfigs());
     }
 
+    /**
+     * Creates a default Kafka listener container factory.
+     */
     @Bean
     public KafkaListenerContainerFactory<?> kafkaListenerContainerFactory() {
         return new ConcurrentKafkaListenerContainerFactory<>();
     }
 
+    /**
+     * Configures Kafka consumer properties.
+     */
     @Bean
     public Map<String, Object> consumerConfigs() {
         Map<String, Object> props = new HashMap<>();
@@ -66,5 +87,4 @@ public class KafkaConsumerConfiguration {
         props.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, true);
         return props;
     }
-
 }

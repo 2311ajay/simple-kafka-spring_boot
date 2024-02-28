@@ -1,7 +1,10 @@
 package com.simplekafka.controller;
 
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.simplekafka.dto.OrderDto;
@@ -20,14 +23,16 @@ public class OrderController {
      * Endpoint for creating a new order.
      * POST /order
      */
-    @PostMapping("/order")
-    public void create() {
-        // Create a new order with a unique name and standard description
+    @PostMapping("/createOrder")
+    public void createOrder(
+            @RequestParam("name") String name, // Mandatory order name parameter
+            @RequestParam(value = "description", required = false) String description // Optional order description parameter
+    ) {
+        // Create OrderDto object with provided name and description
         OrderDto order = OrderDto.builder()
-                .name("New Order #: " + System.nanoTime())
-                .description("Standard description")
+                .name(name)
+                .description(description)
                 .build();
-        
         // Send the order using the order service
         orderService.send(order);
     }

@@ -57,8 +57,7 @@ Refer to the [Spring Boot Kafka Tutorial by Java Brains](https://youtu.be/aKDWWI
 
 5. **Test Endpoints**: Use Insomnia or any HTTP client to test the following endpoints:
 
-   - `POST /order`: Create a new order by sending a POST request with optional parameters (name and description).
-   - `GET /orders`: Retrieve all orders from the Kafka topic.
+   - `POST /createOrder`: Create a new order by sending a POST request with parameters name and description(optional).
 
 ## Configuration
 
